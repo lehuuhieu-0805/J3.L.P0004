@@ -6,6 +6,10 @@
 package controllers;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.Base64;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -56,7 +60,11 @@ public class RegisterController extends HttpServlet {
                 valid = false;
             }
             if (valid) {
-                UserDTO dto = new UserDTO(email, name, password, "member", "New");
+                MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+                byte[] hash = messageDigest.digest(password.getBytes(StandardCharsets.UTF_8));
+
+                String encodedPassword = String.format("%064x", new BigInteger(1, hash));
+                UserDTO dto = new UserDTO(email, name, encodedPassword, "member", "New");
                 if (dao.create(dto)) {
                     url = LOGIN;
                 }

@@ -6,6 +6,9 @@
 package controllers;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -49,7 +52,12 @@ public class LoginController extends HttpServlet {
             }
 
             if (valid) {
-                UserDTO dto = new UserDTO(email, password);
+                MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+                byte[] hash = messageDigest.digest(password.getBytes(StandardCharsets.UTF_8));
+
+                String encodedPassword = String.format("%064x", new BigInteger(1, hash));
+
+                UserDTO dto = new UserDTO(email, encodedPassword);
                 boolean check = dao.checkLogin(dto);
                 if (check) {
                     url = SUCCESS;
