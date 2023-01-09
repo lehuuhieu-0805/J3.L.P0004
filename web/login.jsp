@@ -30,6 +30,7 @@
                     <div class="col-12">
                         <input type="password" name="txtPassword" class="form-control"/>
                         <div style="color:red">${requestScope.INVALID.passwordError}</div>
+                        <div style="color:red">${requestScope.INVALID.userError}</div>
                     </div>
                 </div>
                 <div class="row" style="display: flex; justify-content: space-evenly">

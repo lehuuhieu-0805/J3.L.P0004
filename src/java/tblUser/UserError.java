@@ -11,16 +11,17 @@ package tblUser;
  */
 public class UserError {
 
-    private String emailError, nameError, passwordError, confirmPasswordError;
+    private String emailError, nameError, passwordError, confirmPasswordError, userError;
 
     public UserError() {
     }
 
-    public UserError(String emailError, String nameError, String passwordError, String confirmPasswordError) {
+    public UserError(String emailError, String nameError, String passwordError, String confirmPasswordError, String userError) {
         this.emailError = emailError;
         this.nameError = nameError;
         this.passwordError = passwordError;
         this.confirmPasswordError = confirmPasswordError;
+        this.userError = userError;
     }
 
     public String getEmailError() {
@@ -53,6 +54,14 @@ public class UserError {
 
     public void setConfirmPasswordError(String confirmPasswordError) {
         this.confirmPasswordError = confirmPasswordError;
+    }
+
+    public String getUserError() {
+        return userError;
+    }
+
+    public void setUserError(String userError) {
+        this.userError = userError;
     }
 
 }

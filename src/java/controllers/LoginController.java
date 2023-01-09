@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import tblUser.UserDAO;
 import tblUser.UserDTO;
+import tblUser.UserError;
 
 /**
  *
@@ -24,39 +25,48 @@ import tblUser.UserDTO;
  */
 @WebServlet(name = "LoginController", urlPatterns = {"/LoginController"})
 public class LoginController extends HttpServlet {
-
+    
     private static final String ERROR = "error.jsp";
     private static final String INVALID = "login.jsp";
     private static final String SUCCESS = "articles.jsp";
-
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-
+        
         String url = ERROR;
         UserDAO dao = new UserDAO();
-
+        
         try {
             String email = request.getParameter("txtEmail");
             String password = request.getParameter("txtPassword");
-
+            
             boolean valid = true;
-
+            UserError errorObj = new UserError();
+            
             if (email.length() == 0) {
                 url = INVALID;
                 valid = false;
+                errorObj.setEmailError("Email can't be blank");
+            } else {
+                if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+                    url = INVALID;
+                    valid = false;
+                    errorObj.setEmailError("Email not correct format");
+                }
             }
             if (password.length() == 0) {
                 url = INVALID;
                 valid = false;
+                errorObj.setPasswordError("Password can't be blank");
             }
-
+            
             if (valid) {
                 MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
                 byte[] hash = messageDigest.digest(password.getBytes(StandardCharsets.UTF_8));
-
+                
                 String encodedPassword = String.format("%064x", new BigInteger(1, hash));
-
+                
                 UserDTO dto = new UserDTO(email, encodedPassword);
                 boolean check = dao.checkLogin(dto);
                 if (check) {
@@ -65,9 +75,12 @@ public class LoginController extends HttpServlet {
                     session.setAttribute("email", email);
                 } else {
                     url = INVALID;
+                    errorObj.setUserError("Email or password not correct");
                 }
             }
-
+            
+            request.setAttribute("INVALID", errorObj);
+            
         } catch (Exception e) {
             log("ERROR at LoginController: " + e.getMessage());
         } finally {
