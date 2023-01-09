@@ -15,37 +15,43 @@
         <title>Register Page</title>
     </head>
     <body>
-        <div class="container" style="text-align: center">
-            <h1>Register</h1>
+        <div class="container" style="max-width: 500px">
+            <h1 style="text-align: center">Register</h1>
             <hr/>
             <form action="MainController" method="POST">
-                <table class="form-group" style="margin-left: auto; margin-right: auto">
-                    <tr>
-                        <td>Email: </td>
-                        <td><input type="text" name="txtEmail" value="${param.txtEmail}" class="form-control"/></td>
-                        <td style="color: red">${requestScope.INVALID.emailError}</td>
-                    </tr>
-                    <tr>
-                        <td>Name: </td>
-                        <td><input type="text" name="txtName" value="${param.txtName}" class="form-control"/></td>
-                        <td style="color: red">${requestScope.INVALID.nameError}</td>
-                    </tr>
-                    <tr>
-                        <td>Password: </td>
-                        <td><input type="password" name="txtPassword" class="form-control"/></td>
-                        <td style="color: red">${requestScope.INVALID.passwordError}</td>
-                    </tr>
-                    <tr>
-                        <td>Confirm Password: </td>
-                        <td><input type="password" name="txtConfirmPassword" class="form-control"/></td>
-                        <td style="color: red">${requestScope.INVALID.confirmPasswordError}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><input type="submit" name="action" value="Register" class="btn btn-primary"/></td>
-                    </tr>
-                </table>
+                <div class="row" style="margin-bottom:20px">
+                    <div class="col-12">Email:</div>
+                    <div class="col-12">
+                        <input type="text" name="txtEmail" value="${param.txtEmail}" class="form-control"/>
+                        <div style="color:red">${requestScope.INVALID.emailError}</div>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom:20px">
+                    <div class="col-12">Name:</div>
+                    <div class="col-12">
+                        <input type="text" name="txtName" value="${param.txtName}" class="form-control"/>
+                        <div style="color:red">${requestScope.INVALID.nameError}</div>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom:20px">
+                    <div class="col-12">Password:</div>
+                    <div class="col-12">
+                        <input type="password" name="txtPassword" class="form-control"/>
+                        <div style="color:red">${requestScope.INVALID.passwordError}</div>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom:20px">
+                    <div class="col-12">Confirm password:</div>
+                    <div class="col-12">
+                        <input type="password" name="txtConfirmPassword" class="form-control"/>
+                        <div style="color:red">${requestScope.INVALID.confirmPasswordError}</div>
+                    </div>
+                </div>
+                <div class="row" style="display:flex; justify-content: space-evenly">
+                    <input type="submit" name="action" value="Register" class="btn btn-primary"/>
+                    <a href="login.jsp" class="btn btn-link">Back to login</a>
+                </div>
             </form>
-            <a href="login.jsp" class="btn btn-link">Login</a>
         </div>
     </body>
 </html>
