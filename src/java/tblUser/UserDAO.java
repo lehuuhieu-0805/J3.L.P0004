@@ -70,4 +70,25 @@ public class UserDAO {
         }
         return check;
     }
+
+    public UserDTO findUserByEmail(String email) throws Exception {
+        UserDTO dto = null;
+        try {
+            String sql = "select name, role\n"
+                    + "from [User]\n"
+                    + "where email = ?";
+            con = ConnectDB.makeConnnection();
+            pst = con.prepareStatement(sql);
+            pst.setString(1, email);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                String name = rs.getString(1);
+                String role = rs.getString(2);
+                dto = new UserDTO(email, name, null, role, null);
+            }
+        } finally {
+            closeConnection();
+        }
+        return dto;
+    }
 }

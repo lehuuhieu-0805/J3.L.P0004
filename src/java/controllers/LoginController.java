@@ -28,7 +28,7 @@ public class LoginController extends HttpServlet {
     
     private static final String ERROR = "error.jsp";
     private static final String INVALID = "login.jsp";
-    private static final String SUCCESS = "articles.jsp";
+    private static final String SUCCESS_ROLE_MEMMER = "articles.jsp";
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -70,9 +70,14 @@ public class LoginController extends HttpServlet {
                 UserDTO dto = new UserDTO(email, encodedPassword);
                 boolean check = dao.checkLogin(dto);
                 if (check) {
-                    url = SUCCESS;
-                    HttpSession session = request.getSession();
-                    session.setAttribute("email", email);
+                    UserDTO user = dao.findUserByEmail(email);
+                    if (user.getRole().equals("member")) {
+                        url = SUCCESS_ROLE_MEMMER;
+                        HttpSession session = request.getSession();
+                        session.setAttribute("email", email);
+                        session.setAttribute("name", user.getName());
+                        session.setAttribute("role", user.getRole());
+                    }
                 } else {
                     url = INVALID;
                     errorObj.setUserError("Email or password not correct");
