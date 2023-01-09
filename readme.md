@@ -3,7 +3,7 @@
 #### Clone project
 
 ```
-git clone https://github.com/lehuuhieu-0805/J3.L.P0004.git
+git clone https://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@github.com/lehuuhieu-0805/J3.L.P0004.git
 ```
 
 #### Run project
