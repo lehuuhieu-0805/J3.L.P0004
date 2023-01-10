@@ -16,3 +16,7 @@ git clone https://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@github.com/lehuuhieu-
 3. Thêm thư viện sqljdbc vào project: click chuột phải vào folder libraries chọn 'Add JAR/Folder' chọn file sqljdbc42.jar
 
    ![libraries](https://drive.google.com/uc?export=view&id=1YsvGt-fP_HVxli3zhDVkC5p8eOvviL4J)
+
+4. Thêm thư viện jstl vào project: click chuột phải vào folder libraries chọn 'Add library' tìm 'JSTL 1.2.1' click 'Add Library'
+
+   ![libraries](https://drive.google.com/uc?export=view&id=1YZppn12JkECiI8EFOgbjy2hJD4iUaGgS)
