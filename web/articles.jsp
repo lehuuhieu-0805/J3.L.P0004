@@ -16,7 +16,7 @@
         <c:if test="${empty sessionScope.email}">
             <c:redirect url="LogoutController"></c:redirect>
         </c:if>
-        <c:if test="${sessionScope.role ne 'memeber'}">
+        <c:if test="${sessionScope.role ne 'member'}">
             <c:redirect url="error.jsp"></c:redirect>
         </c:if>
 
