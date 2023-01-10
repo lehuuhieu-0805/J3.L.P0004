@@ -20,6 +20,7 @@ public class MainController extends HttpServlet {
     private static final String REGISTER = "RegisterController";
     private static final String ERROR = "error.jsp";
     private static final String LOGIN = "LoginController";
+    private static final String POST_ARTICLE = "PostArticleController";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -32,8 +33,10 @@ public class MainController extends HttpServlet {
         try {
             if (action.equals("Register")) {
                 url = REGISTER;
-            } else if(action.equals("Login")){
+            } else if (action.equals("Login")) {
                 url = LOGIN;
+            } else if (action.equals("Post")) {
+                url = POST_ARTICLE;
             }
         } catch (Exception e) {
             log("ERROR at MainController: " + e.getMessage());

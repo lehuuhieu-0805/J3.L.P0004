@@ -10,6 +10,8 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
         <title>Article Page</title>
     </head>
     <body>
@@ -23,5 +25,6 @@
         <h1>Article Page</h1>
         <h3>Welcome ${sessionScope.name}</h3>
         <a href="LogoutController" class="btn btn-link btn-sm">Logout</a>
+        <a href="postArticle.jsp" class="btn btn-primary">Post the article</a>
     </body>
 </html>
