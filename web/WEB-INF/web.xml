@@ -14,7 +14,7 @@
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>login.jsp</welcome-file>
+        <welcome-file>SearchController</welcome-file>
     </welcome-file-list>
     <resource-ref>
         <res-ref-name>DB</res-ref-name>

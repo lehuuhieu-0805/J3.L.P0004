@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 public class ArticleDTO implements Serializable {
 
     private int id;
-    private String title, shortDescription, content, status, userEmail;
+    private String title, shortDescription, content, status, userEmail, userName;
     private Timestamp postingDate;
 
     public ArticleDTO() {
@@ -39,6 +39,15 @@ public class ArticleDTO implements Serializable {
         this.status = status;
         this.userEmail = userEmail;
         this.postingDate = postingDate;
+    }
+
+    public ArticleDTO(int id, String title, String shortDescription, Timestamp postingDate, String userEmail, String userName) {
+        this.id = id;
+        this.title = title;
+        this.shortDescription = shortDescription;
+        this.postingDate = postingDate;
+        this.userEmail = userEmail;
+        this.userName = userName;
     }
 
     public int getId() {
@@ -95,6 +104,14 @@ public class ArticleDTO implements Serializable {
 
     public void setPostingDate(Timestamp postingDate) {
         this.postingDate = postingDate;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
 }

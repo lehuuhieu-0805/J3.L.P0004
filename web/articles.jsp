@@ -15,16 +15,69 @@
         <title>Article Page</title>
     </head>
     <body>
-        <c:if test="${empty sessionScope.email}">
-            <c:redirect url="LogoutController"></c:redirect>
-        </c:if>
-        <c:if test="${sessionScope.role ne 'member'}">
-            <c:redirect url="error.jsp"></c:redirect>
-        </c:if>
+        <div class="container">
+            <h1>Article Page</h1>
+            <c:if test="${sessionScope.name}">
+                <h3>Welcome ${sessionScope.name}</h3>
+                <a href="LogoutController" class="btn btn-link btn-sm">Logout</a>
+                <a href="postArticle.jsp" class="btn btn-primary">Post the article</a>
+            </c:if>
+            <c:if test="${empty sessionScope.name}">
+                <a href="login.jsp" class="btn btn-primary">Login</a>
+            </c:if>
 
-        <h1>Article Page</h1>
-        <h3>Welcome ${sessionScope.name}</h3>
-        <a href="LogoutController" class="btn btn-link btn-sm">Logout</a>
-        <a href="postArticle.jsp" class="btn btn-primary">Post the article</a>
+            <form action="MainController" style="margin-top: 20px">
+                <div class="form-group">
+                    <label for="exampleInputContent">Search by content</label>
+                    <input type="text" class="form-control" id="exampleInputContent" name="txtSearchContent" value="${param.txtSearchContent}" >
+                    <!--<small class="form-text text-muted" style="color:red !important">${requestScope.INVALID.titleError}</small>-->
+                </div>
+
+                <input type="submit" value="Search" name="action" class="btn btn-primary"/>
+            </form>
+
+            <c:set var="searchContent" value="${param.txtSearchContent}"/>
+            <%--<c:if test="${not empty searchContent}">--%>
+            <c:set var="result" value="${requestScope.SEARCH_RESULT}"/>
+            <c:if test="${not empty result}">
+                <table class="table table-bordered" style="margin-top: 20px">
+                    <thead>
+                        <tr>
+                            <th scope="col">No.</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Short Description</th>
+                            <th scope="col">Author</th>
+                            <th scope="col">Posting Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="dto" items="${result}" varStatus="counter" >
+                            <tr>
+                                <th scope="row">${counter.count}</th>
+                                <td>${dto.title}</td>
+                                <td>${dto.shortDescription}</td>
+                                <td>${dto.userName}</td>
+                                <td>${dto.postingDate}</td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-end">
+                        <c:forEach begin="1" end="${requestScope.END_PAGE}" var="i">
+                            <li class="page-item ${requestScope.CURRENT_PAGE == i ? "active" : ""}">
+                                <a class="page-link" href="SearchController?page=${i}">${i}</a>
+                            </li>
+                        </c:forEach>
+                    </ul>
+                </nav>
+            </c:if>
+            <c:if test="${empty result}">
+                <h2>No record found</h2>
+            </c:if>
+            <%--</c:if>--%>
+
+
+        </div>
     </body>
 </html>

@@ -8,6 +8,9 @@ package tblArticle;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import utils.ConnectDB;
 
 /**
@@ -50,5 +53,69 @@ public class ArticleDAO {
         }
 
         return check;
+    }
+
+    public List<ArticleDTO> searchWithPagination(String search, int page) throws Exception {
+        List<ArticleDTO> list = new ArrayList<>();
+
+        try {
+            String sql = "select a.Id, a.Title, a.ShortDescription, a.PostingDate, a.UserEmail, u.Name\n"
+                    + "from Article a\n"
+                    + "join [User] u\n"
+                    + "on u.Email = a.UserEmail\n"
+                    + "where a.Status = 'Active' and a.Content like ?\n"
+                    + "order by a.PostingDate DESC\n"
+                    + "offset ? rows\n"
+                    + "fetch next 20 rows only";
+            con = ConnectDB.makeConnnection();
+            pst = con.prepareStatement(sql);
+            pst.setString(1, "%" + search + "%");
+            pst.setInt(2, page);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                String title = rs.getString(2);
+                String shortDescription = rs.getString(3);
+                Timestamp postingDate = rs.getTimestamp(4);
+                String userEmail = rs.getString(5);
+                String name = rs.getString(6);
+                ArticleDTO dto = new ArticleDTO(id, title, shortDescription, postingDate, userEmail, name);
+                list.add(dto);
+            }
+        } finally {
+            closeConnection();
+        }
+
+        return list;
+    }
+
+    public List<ArticleDTO> search(String search) throws Exception {
+        List<ArticleDTO> list = new ArrayList<>();
+
+        try {
+            String sql = "select a.Id, a.Title, a.ShortDescription, a.PostingDate, a.UserEmail, u.Name\n"
+                    + "from Article a\n"
+                    + "join [User] u\n"
+                    + "on u.Email = a.UserEmail\n"
+                    + "where a.Status = 'Active' and a.Content like ?";
+            con = ConnectDB.makeConnnection();
+            pst = con.prepareStatement(sql);
+            pst.setString(1, "%" + search + "%");
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                String title = rs.getString(2);
+                String shortDescription = rs.getString(3);
+                Timestamp postingDate = rs.getTimestamp(4);
+                String userEmail = rs.getString(5);
+                String name = rs.getString(6);
+                ArticleDTO dto = new ArticleDTO(id, title, shortDescription, postingDate, userEmail, name);
+                list.add(dto);
+            }
+        } finally {
+            closeConnection();
+        }
+
+        return list;
     }
 }
