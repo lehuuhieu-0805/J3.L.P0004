@@ -32,17 +32,18 @@ public class UserDAO {
         }
     }
 
-    public boolean create(UserDTO dto) throws Exception {
+    public boolean create(String email, String name, String password, String role, String status, String code) throws Exception {
         boolean check = false;
         try {
-            String sql = "insert into [User] values (?,?,?,?,?)";
+            String sql = "insert into [User] values (?,?,?,?,?,?)";
             con = ConnectDB.makeConnnection();
             pst = con.prepareStatement(sql);
-            pst.setString(1, dto.getEmail());
-            pst.setString(2, dto.getName());
-            pst.setString(3, dto.getPassword());
-            pst.setString(4, dto.getRole());
-            pst.setString(5, dto.getStatus());
+            pst.setString(1, email);
+            pst.setString(2, name);
+            pst.setString(3, password);
+            pst.setString(4, role);
+            pst.setString(5, status);
+            pst.setString(6, code);
             check = pst.executeUpdate() > 0;
         } finally {
             closeConnection();
@@ -51,16 +52,16 @@ public class UserDAO {
         return check;
     }
 
-    public boolean checkLogin(UserDTO dto) throws Exception {
+    public boolean checkLogin(String email, String password) throws Exception {
         boolean check = false;
         try {
-            String sql = "select role\n"
+            String sql = "select Role\n"
                     + "from [User]\n"
-                    + "where email = ? and password = ?";
+                    + "where Email = ? and Password = ? and Status = 'New'";
             con = ConnectDB.makeConnnection();
             pst = con.prepareStatement(sql);
-            pst.setString(1, dto.getEmail());
-            pst.setString(2, dto.getPassword());
+            pst.setString(1, email);
+            pst.setString(2, password);
             rs = pst.executeQuery();
             while (rs.next()) {
                 check = true;
@@ -74,9 +75,9 @@ public class UserDAO {
     public UserDTO findUserByEmail(String email) throws Exception {
         UserDTO dto = null;
         try {
-            String sql = "select name, role\n"
+            String sql = "select Name, Role, Status\n"
                     + "from [User]\n"
-                    + "where email = ?";
+                    + "where Email = ?";
             con = ConnectDB.makeConnnection();
             pst = con.prepareStatement(sql);
             pst.setString(1, email);
@@ -84,11 +85,50 @@ public class UserDAO {
             while (rs.next()) {
                 String name = rs.getString(1);
                 String role = rs.getString(2);
-                dto = new UserDTO(email, name, null, role, null);
+                String status = rs.getString(3);
+                dto = new UserDTO(email, name, null, role, status, null);
             }
         } finally {
             closeConnection();
         }
         return dto;
+    }
+
+    public boolean checkCode(String email, String code) throws Exception {
+        boolean check = false;
+
+        try {
+            String sql = "select Name\n"
+                    + "from [User]\n"
+                    + "where Email = ? and Code = ?";
+            con = ConnectDB.makeConnnection();
+            pst = con.prepareStatement(sql);
+            pst.setString(1, email);
+            pst.setString(2, code);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                check = true;
+            }
+        } finally {
+            closeConnection();
+        }
+
+        return check;
+    }
+
+    public boolean updateStatus(String email, String status) throws Exception {
+        boolean check = false;
+
+        try {
+            String sql = "update [User] set Status = 'New' where Email = ?";
+            con = ConnectDB.makeConnnection();
+            pst = con.prepareStatement(sql);
+            pst.setString(1, email);
+            check = pst.executeUpdate() > 0;
+        } finally {
+            closeConnection();
+        }
+
+        return check;
     }
 }

@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 public class UserDTO implements Serializable {
 
-    private String email, name, password, role, status;
+    private String email, name, password, role, status, code;
 
     public UserDTO() {
     }
@@ -23,12 +23,13 @@ public class UserDTO implements Serializable {
         this.password = password;
     }
 
-    public UserDTO(String email, String name, String password, String role, String status) {
+    public UserDTO(String email, String name, String password, String role, String status, String code) {
         this.email = email;
         this.name = name;
         this.password = password;
         this.role = role;
         this.status = status;
+        this.code = code;
     }
 
     public String getEmail() {
@@ -69,6 +70,14 @@ public class UserDTO implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
 }

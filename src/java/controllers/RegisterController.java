@@ -9,16 +9,15 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.Base64;
+import java.util.Random;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import tblUser.UserDAO;
-import tblUser.UserDTO;
 import tblUser.UserError;
+import utils.SendEmail;
 
 /**
  *
@@ -28,7 +27,7 @@ import tblUser.UserError;
 public class RegisterController extends HttpServlet {
     
     private static final String ERROR = "error.jsp";
-    private static final String LOGIN = "login.jsp";
+    private static final String SUCCESS = "verify.jsp";
     private static final String INVALID = "register.jsp";
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -52,7 +51,7 @@ public class RegisterController extends HttpServlet {
                 valid = false;
                 errorObj.setEmailError("Email can't be blank");
             } else {
-                if(!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")){
+                if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
                     url = INVALID;
                     valid = false;
                     errorObj.setEmailError("Email not correct format");
@@ -75,13 +74,19 @@ public class RegisterController extends HttpServlet {
             }
             
             if (valid) {
+                Random random = new Random();
+                int temp = random.nextInt(999999);
+                String codeVerify = String.format("%06d", temp);
+                
                 MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
                 byte[] hash = messageDigest.digest(password.getBytes(StandardCharsets.UTF_8));
                 
                 String encodedPassword = String.format("%064x", new BigInteger(1, hash));
-                UserDTO dto = new UserDTO(email, name, encodedPassword, "member", "New");
-                if (dao.create(dto)) {
-                    url = LOGIN;
+                if (dao.create(email, name, encodedPassword, "member", "Verifying", codeVerify)) {
+                    url = SUCCESS;
+                    SendEmail sendEmail = new SendEmail();
+                    sendEmail.sendEmail(email, codeVerify);
+                    request.setAttribute("EMAIL", email);
                 }
             } else {
                 request.setAttribute("INVALID", errorObj);

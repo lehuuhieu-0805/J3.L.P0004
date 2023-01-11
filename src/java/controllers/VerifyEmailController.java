@@ -6,55 +6,64 @@
 package controllers;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import tblUser.UserDAO;
 
 /**
  *
  * @author lehuuhieu
  */
-public class MainController extends HttpServlet {
+@WebServlet(name = "VerifyEmailController", urlPatterns = {"/VerifyEmailController"})
+public class VerifyEmailController extends HttpServlet {
 
-    private static final String REGISTER = "RegisterController";
     private static final String ERROR = "error.jsp";
-    private static final String LOGIN = "LoginController";
-    private static final String POST_ARTICLE = "PostArticleController";
-    private static final String SEARCH = "SearchController";
-    private static final String POST_COMMENT = "PostCommnetController";
-    private static final String SEARCH_ARTICLE = "SearchArticleController";
-    private static final String VERIFY_EMAIL = "VerifyEmailController";
+    private static final String SUCCESS = "login.jsp";
+    private static final String INVALID = "verify.jsp";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
 
         String url = ERROR;
-        String action = request.getParameter("action");
-        log(action);
 
         try {
-            if (action.equals("Register")) {
-                url = REGISTER;
-            } else if (action.equals("Login")) {
-                url = LOGIN;
-            } else if (action.equals("Post")) {
-                url = POST_ARTICLE;
-            } else if (action.equals("Search")) {
-                url = SEARCH;
-            } else if (action.equals("Comment")) {
-                url = POST_COMMENT;
-            } else if (action.equals("Search Article")) {
-                url = SEARCH_ARTICLE;
-            } else if (action.equals("Verify")) {
-                url = VERIFY_EMAIL;
+            String code = request.getParameter("txtCode");
+            String email = request.getParameter("email");
+
+            boolean valid = true;
+
+            if (code == null) {
+                url = INVALID;
+                request.setAttribute("INVALID", "Code can't be blank");
+                valid = false;
+                request.setAttribute("EMAIL", email);
+            }
+
+            if (valid) {
+                UserDAO dao = new UserDAO();
+                boolean check = dao.checkCode(email, code);
+                if (check) {
+                    check = dao.updateStatus(email, "New");
+                    if (check) {
+                        url = SUCCESS;
+                    }
+                } else {
+                    url = INVALID;
+                    request.setAttribute("INVALID_VERIFY", "Code is invalid");
+                    request.setAttribute("EMAIL", email);
+                }
             }
         } catch (Exception e) {
-            log("ERROR at MainController: " + e.getMessage());
+            log("ERROR at VerifyEmailController: " + e.getMessage());
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
