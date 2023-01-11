@@ -28,7 +28,7 @@ public class LoginController extends HttpServlet {
     
     private static final String ERROR = "error.jsp";
     private static final String INVALID = "login.jsp";
-    private static final String SUCCESS_ROLE_MEMMER = "articles.jsp";
+    private static final String SUCCESS_ROLE_MEMMER = "SearchController";
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
