@@ -56,8 +56,10 @@ public class CommentDAO {
         List<CommentDTO> list = new ArrayList<>();
 
         try {
-            String sql = "select Id, Description, UserEmail\n"
-                    + "from Comment\n"
+            String sql = "select c.Id, c.Description, c.UserEmail, u.Name\n"
+                    + "from Comment c\n"
+                    + "join [User] u\n"
+                    + "on c.UserEmail = u.Email\n"
                     + "where ArticleId = ?";
             con = ConnectDB.makeConnnection();
             pst = con.prepareStatement(sql);
@@ -67,7 +69,8 @@ public class CommentDAO {
                 int id = rs.getInt(1);
                 String description = rs.getString(2);
                 String userEmail = rs.getString(3);
-                list.add(new CommentDTO(id, articleId, description, userEmail));
+                String userName = rs.getString(4);
+                list.add(new CommentDTO(id, articleId, description, userEmail, userName));
             }
         } finally {
             closeConnection();

@@ -14,16 +14,17 @@ import java.io.Serializable;
 public class CommentDTO implements Serializable {
 
     private int id, articleId;
-    private String description, userEmail;
+    private String description, userEmail, userName;
 
     public CommentDTO() {
     }
 
-    public CommentDTO(int id, int articleId, String description, String userEmail) {
+    public CommentDTO(int id, int articleId, String description, String userEmail, String userName) {
         this.id = id;
         this.articleId = articleId;
         this.description = description;
         this.userEmail = userEmail;
+        this.userName = userName;
     }
 
     public CommentDTO(int articleId, String description, String userEmail) {
@@ -62,6 +63,14 @@ public class CommentDTO implements Serializable {
 
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
 }

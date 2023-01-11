@@ -31,13 +31,19 @@
                 <h4>Posting Date</h4>
                 <h6>${dto.postingDate}</h6>
                 <h4>Comment</h4>
-                <h6>Comment</h6>
+                <c:set var="listComment" value="${requestScope.LIST_COMMENT}"/>
+                <c:if test="${not empty listComment}">
+                    <c:forEach var="comment" items="${listComment}">
+                        <h6>${comment.userName}: ${comment.description}</h6>
+                    </c:forEach>
+                </c:if>
+                <h6></h6>
                 <hr/>
 
                 <form action="MainController" method="POST">
                     <div class="form-group">
                         <input type="hidden" name="articleId" value="${dto.id}"/>
-                        <input type="text" class="form-control" id="exampleInputDescription" name="txtDescriptionComment" value="${param.txtDescriptionComment}" placeholder="Description comment ...">
+                        <input type="text" class="form-control" id="exampleInputDescription" name="txtDescriptionComment" placeholder="Description comment ...">
                         <small class="form-text text-muted" style="color:red !important">${requestScope.INVALID.descriptionError}</small>
                     </div>
                     <input type="submit" value="Comment" name="action" class="btn btn-primary"/>

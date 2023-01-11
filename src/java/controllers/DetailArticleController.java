@@ -6,6 +6,7 @@
 package controllers;
 
 import java.io.IOException;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import tblArticle.ArticleDAO;
 import tblArticle.ArticleDTO;
+import tblComment.CommentDAO;
+import tblComment.CommentDTO;
 
 /**
  *
@@ -32,13 +35,18 @@ public class DetailArticleController extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
 
         try {
-            ArticleDAO dao = new ArticleDAO();
-            ArticleDTO dto = dao.findById(id);
+            ArticleDAO articleDAO = new ArticleDAO();
+            ArticleDTO dto = articleDAO.findById(id);
 
             if (dto != null) {
                 request.setAttribute("DTO", dto);
                 url = SUCCESS;
             }
+
+            CommentDAO commentDAO = new CommentDAO();
+            List<CommentDTO> listComment = commentDAO.listComment(id);
+
+            request.setAttribute("LIST_COMMENT", listComment);
 
         } catch (Exception e) {
             log("ERORR at DetailArticleController: " + e.getMessage());
