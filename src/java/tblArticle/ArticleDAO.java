@@ -118,4 +118,33 @@ public class ArticleDAO {
 
         return list;
     }
+
+    public ArticleDTO findById(int id) throws Exception {
+        ArticleDTO dto = null;
+
+        try {
+            String sql = "select a.Title, a.ShortDescription, a.PostingDate, a.UserEmail, a.Content, u.Name\n"
+                    + "from Article a\n"
+                    + "join [User] u\n"
+                    + "on u.Email = a.UserEmail\n"
+                    + "where a.Id = ?";
+            con = ConnectDB.makeConnnection();
+            pst = con.prepareStatement(sql);
+            pst.setInt(1, id);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                String title = rs.getString(1);
+                String shortDescription = rs.getString(2);
+                Timestamp postingDate = rs.getTimestamp(3);
+                String userEmail = rs.getString(4);
+                String content = rs.getString(5);
+                String name = rs.getString(6);
+                dto = new ArticleDTO(id, title, shortDescription, postingDate, userEmail, name, content);
+            }
+        } finally {
+            closeConnection();
+        }
+
+        return dto;
+    }
 }
