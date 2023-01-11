@@ -7,45 +7,46 @@ package controllers;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import tblComment.CommentDAO;
 
 /**
  *
  * @author lehuuhieu
  */
-public class MainController extends HttpServlet {
+@WebServlet(name = "PostCommnetController", urlPatterns = {"/PostCommnetController"})
+public class PostCommnetController extends HttpServlet {
 
-    private static final String REGISTER = "RegisterController";
     private static final String ERROR = "error.jsp";
-    private static final String LOGIN = "LoginController";
-    private static final String POST_ARTICLE = "PostArticleController";
-    private static final String SEARCH = "SearchController";
-    private static final String POST_COMMENT = "PostCommnetController";
+    private static final String NOT_AUTHENTICATED = "LogoutController";
+    private static final String SUCCESS = "DetailArticleController";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
 
+        String comment = request.getParameter("txtDescriptionComment");
+        int id = Integer.parseInt(request.getParameter("articleId"));
         String url = ERROR;
-        String action = request.getParameter("action");
-        log(action);
 
         try {
-            if (action.equals("Register")) {
-                url = REGISTER;
-            } else if (action.equals("Login")) {
-                url = LOGIN;
-            } else if (action.equals("Post")) {
-                url = POST_ARTICLE;
-            } else if (action.equals("Search")) {
-                url = SEARCH;
-            } else if (action.equals("Comment")) {
-                url = POST_COMMENT;
+            HttpSession session = request.getSession();
+            String email = (String) session.getAttribute("email");
+            if (email == null) {
+                url = NOT_AUTHENTICATED;
+            } else {
+                CommentDAO dao = new CommentDAO();
+                boolean check = dao.create(comment, email, id);
+                if (check) {
+                    url = SUCCESS + "?id=" + id;
+                }
             }
         } catch (Exception e) {
-            log("ERROR at MainController: " + e.getMessage());
+            log("ERROR at PostCommentController: " + e.getMessage());
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }

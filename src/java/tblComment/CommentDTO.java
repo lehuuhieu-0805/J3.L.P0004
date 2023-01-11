@@ -26,6 +26,12 @@ public class CommentDTO implements Serializable {
         this.userEmail = userEmail;
     }
 
+    public CommentDTO(int articleId, String description, String userEmail) {
+        this.articleId = articleId;
+        this.description = description;
+        this.userEmail = userEmail;
+    }
+
     public int getId() {
         return id;
     }
@@ -57,6 +63,5 @@ public class CommentDTO implements Serializable {
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
     }
-    
-    
+
 }

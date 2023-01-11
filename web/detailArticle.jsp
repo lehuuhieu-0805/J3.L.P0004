@@ -17,6 +17,7 @@
     <body>
         <div class="container">
             <h1>Detail Article</h1>
+            <a href="SearchController" class="btn btn-link">Back</a>
             <c:set var="dto" value="${requestScope.DTO}" />
             <c:if test="${not empty dto}" >
                 <h4>Title</h4>
@@ -32,6 +33,15 @@
                 <h4>Comment</h4>
                 <h6>Comment</h6>
                 <hr/>
+
+                <form action="MainController" method="POST">
+                    <div class="form-group">
+                        <input type="hidden" name="articleId" value="${dto.id}"/>
+                        <input type="text" class="form-control" id="exampleInputDescription" name="txtDescriptionComment" value="${param.txtDescriptionComment}" placeholder="Description comment ...">
+                        <small class="form-text text-muted" style="color:red !important">${requestScope.INVALID.descriptionError}</small>
+                    </div>
+                    <input type="submit" value="Comment" name="action" class="btn btn-primary"/>
+                </form>
             </c:if>
             <c:if test="${empty dto}">
                 Not found article
