@@ -17,7 +17,7 @@
     <body>
         <div class="container">
             <h1>Article Page</h1>
-            <c:if test="${sessionScope.name}">
+            <c:if test="${not empty sessionScope.name}">
                 <h3>Welcome ${sessionScope.name}</h3>
                 <a href="LogoutController" class="btn btn-link btn-sm">Logout</a>
                 <a href="postArticle.jsp" class="btn btn-primary">Post the article</a>
@@ -30,7 +30,6 @@
                 <div class="form-group">
                     <label for="exampleInputContent">Search by content</label>
                     <input type="text" class="form-control" id="exampleInputContent" name="txtSearchContent" value="${param.txtSearchContent}" >
-                    <!--<small class="form-text text-muted" style="color:red !important">${requestScope.INVALID.titleError}</small>-->
                 </div>
 
                 <input type="submit" value="Search" name="action" class="btn btn-primary"/>
