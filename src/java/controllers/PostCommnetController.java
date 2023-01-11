@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import tblComment.CommentDAO;
+import tblComment.CommentError;
 
 /**
  *
@@ -24,6 +25,7 @@ public class PostCommnetController extends HttpServlet {
     private static final String ERROR = "error.jsp";
     private static final String NOT_AUTHENTICATED = "LogoutController";
     private static final String SUCCESS = "DetailArticleController";
+    private static final String INVALID = "DetailArticleController";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -33,18 +35,32 @@ public class PostCommnetController extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("articleId"));
         String url = ERROR;
 
+        CommentError errorObj = new CommentError();
+
         try {
-            HttpSession session = request.getSession();
-            String email = (String) session.getAttribute("email");
-            if (email == null) {
-                url = NOT_AUTHENTICATED;
-            } else {
-                CommentDAO dao = new CommentDAO();
-                boolean check = dao.create(comment, email, id);
-                if (check) {
-                    url = SUCCESS + "?id=" + id;
+            boolean valid = true;
+
+            if (comment.length() == 0) {
+                errorObj.setDescriptionError("Description comment can't be blank");
+                valid = false;
+                url = INVALID + "?id=" + id;
+            }
+
+            if (valid) {
+                HttpSession session = request.getSession();
+                String email = (String) session.getAttribute("email");
+                if (email == null) {
+                    url = NOT_AUTHENTICATED;
+                } else {
+                    CommentDAO dao = new CommentDAO();
+                    boolean check = dao.create(comment, email, id);
+                    if (check) {
+                        url = SUCCESS + "?id=" + id;
+                    }
                 }
             }
+
+            request.setAttribute("INVALID", errorObj);
         } catch (Exception e) {
             log("ERROR at PostCommentController: " + e.getMessage());
         } finally {

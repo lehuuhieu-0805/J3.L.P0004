@@ -8,6 +8,8 @@ package tblComment;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import utils.ConnectDB;
 
 /**
@@ -15,11 +17,11 @@ import utils.ConnectDB;
  * @author lehuuhieu
  */
 public class CommentDAO {
-    
+
     private Connection con;
     private PreparedStatement pst;
     private ResultSet rs;
-    
+
     public void closeConnection() throws Exception {
         if (rs != null) {
             rs.close();
@@ -31,10 +33,10 @@ public class CommentDAO {
             con.close();
         }
     }
-    
+
     public boolean create(String description, String email, int articleId) throws Exception {
         boolean check = false;
-        
+
         try {
             String sql = "insert into Comment values (?,?,?)";
             con = ConnectDB.makeConnnection();
@@ -46,7 +48,31 @@ public class CommentDAO {
         } finally {
             closeConnection();
         }
-        
+
         return check;
+    }
+
+    public List<CommentDTO> listComment(int articleId) throws Exception {
+        List<CommentDTO> list = new ArrayList<>();
+
+        try {
+            String sql = "select Id, Description, UserEmail\n"
+                    + "from Comment\n"
+                    + "where ArticleId = ?";
+            con = ConnectDB.makeConnnection();
+            pst = con.prepareStatement(sql);
+            pst.setInt(1, articleId);
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                String description = rs.getString(2);
+                String userEmail = rs.getString(3);
+                list.add(new CommentDTO(id, articleId, description, userEmail));
+            }
+        } finally {
+            closeConnection();
+        }
+
+        return list;
     }
 }
