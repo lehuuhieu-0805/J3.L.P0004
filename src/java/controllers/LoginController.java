@@ -25,25 +25,26 @@ import tblUser.UserError;
  */
 @WebServlet(name = "LoginController", urlPatterns = {"/LoginController"})
 public class LoginController extends HttpServlet {
-    
+
     private static final String ERROR = "error.jsp";
     private static final String INVALID = "login.jsp";
     private static final String SUCCESS_ROLE_MEMMER = "SearchController";
-    
+    private static final String SUCCESS_ROLE_ADMIN = "SearchArticleController";
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        
+
         String url = ERROR;
         UserDAO dao = new UserDAO();
-        
+
         try {
             String email = request.getParameter("txtEmail");
             String password = request.getParameter("txtPassword");
-            
+
             boolean valid = true;
             UserError errorObj = new UserError();
-            
+
             if (email.length() == 0) {
                 url = INVALID;
                 valid = false;
@@ -60,20 +61,25 @@ public class LoginController extends HttpServlet {
                 valid = false;
                 errorObj.setPasswordError("Password can't be blank");
             }
-            
+
             if (valid) {
                 MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
                 byte[] hash = messageDigest.digest(password.getBytes(StandardCharsets.UTF_8));
-                
+
                 String encodedPassword = String.format("%064x", new BigInteger(1, hash));
-                
+
                 UserDTO dto = new UserDTO(email, encodedPassword);
                 boolean check = dao.checkLogin(dto);
                 if (check) {
                     UserDTO user = dao.findUserByEmail(email);
+                    HttpSession session = request.getSession();
                     if (user.getRole().equals("member")) {
                         url = SUCCESS_ROLE_MEMMER;
-                        HttpSession session = request.getSession();
+                        session.setAttribute("email", email);
+                        session.setAttribute("name", user.getName());
+                        session.setAttribute("role", user.getRole());
+                    } else if (user.getRole().equals("admin")) {
+                        url = SUCCESS_ROLE_ADMIN;
                         session.setAttribute("email", email);
                         session.setAttribute("name", user.getName());
                         session.setAttribute("role", user.getRole());
@@ -83,9 +89,9 @@ public class LoginController extends HttpServlet {
                     errorObj.setUserError("Email or password not correct");
                 }
             }
-            
+
             request.setAttribute("INVALID", errorObj);
-            
+
         } catch (Exception e) {
             log("ERROR at LoginController: " + e.getMessage());
         } finally {

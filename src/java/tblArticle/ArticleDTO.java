@@ -60,6 +60,17 @@ public class ArticleDTO implements Serializable {
         this.content = content;
     }
 
+    public ArticleDTO(int id, String title, String shortDescription, Timestamp postingDate, String userEmail, String userName, String content, String status) {
+        this.id = id;
+        this.title = title;
+        this.shortDescription = shortDescription;
+        this.postingDate = postingDate;
+        this.userEmail = userEmail;
+        this.userName = userName;
+        this.content = content;
+        this.status = status;
+    }
+
     public int getId() {
         return id;
     }

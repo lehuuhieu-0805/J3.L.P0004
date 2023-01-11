@@ -6,52 +6,76 @@
 package controllers;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import tblArticle.ArticleDAO;
+import tblArticle.ArticleDTO;
 
 /**
  *
  * @author lehuuhieu
  */
-public class MainController extends HttpServlet {
+@WebServlet(name = "SearchArticleController", urlPatterns = {"/SearchArticleController"})
+public class SearchArticleController extends HttpServlet {
 
-    private static final String REGISTER = "RegisterController";
     private static final String ERROR = "error.jsp";
-    private static final String LOGIN = "LoginController";
-    private static final String POST_ARTICLE = "PostArticleController";
-    private static final String SEARCH = "SearchController";
-    private static final String POST_COMMENT = "PostCommnetController";
-    private static final String SEARCH_ARTICLE = "SearchArticleController";
+    private static final String SUCCESS = "articlesForAdmin.jsp";
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
 
         String url = ERROR;
-        String action = request.getParameter("action");
-        log(action);
 
         try {
-            if (action.equals("Register")) {
-                url = REGISTER;
-            } else if (action.equals("Login")) {
-                url = LOGIN;
-            } else if (action.equals("Post")) {
-                url = POST_ARTICLE;
-            } else if (action.equals("Search")) {
-                url = SEARCH;
-            } else if (action.equals("Comment")) {
-                url = POST_COMMENT;
-            } else if (action.equals("Search Article")) {
-                url = SEARCH_ARTICLE;
+            String articleName = request.getParameter("txtSearchArticleName");
+            String selectStatusPosting = request.getParameter("selectStatusPosting");
+
+            String pageTemp = request.getParameter("page");
+            int page = 0;
+            if (pageTemp != null) {
+                // current page start = 1 so this value page use in offset sql and offset start = 0 so we must use page - 1
+                page = Integer.parseInt(request.getParameter("page")) - 1;
             }
+
+            if (articleName == null) {
+                articleName = "";
+            }
+
+            if (selectStatusPosting == null || selectStatusPosting.equals("Choose status posting")) {
+                selectStatusPosting = "";
+            }
+
+            ArticleDAO dao = new ArticleDAO();
+            List<ArticleDTO> list = dao.searchByNameWithPagination(articleName, selectStatusPosting, page);
+
+            request.setAttribute("LIST_ARTICLES", list);
+            if (selectStatusPosting.equals("")) {
+                selectStatusPosting = "Choose status posting";
+            }
+            request.setAttribute("STATUS", selectStatusPosting);
+            url = SUCCESS;
+
+            int count = dao.searchByName(articleName, selectStatusPosting).size();
+            int endPage = count / 20;
+            if (count % 20 != 0) {
+                endPage++;
+            }
+
+            request.setAttribute("END_PAGE", endPage);
+            // this value page use in offset sql and offset start = 0 so current page must equal page + 1
+            request.setAttribute("CURRENT_PAGE", page + 1);
         } catch (Exception e) {
-            log("ERROR at MainController: " + e.getMessage());
+            log("ERROR at SearchArticleController: " + e.getMessage());
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

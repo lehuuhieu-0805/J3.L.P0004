@@ -147,4 +147,138 @@ public class ArticleDAO {
 
         return dto;
     }
+
+    public List<ArticleDTO> searchByName(String articleName, String status) throws Exception {
+        List<ArticleDTO> list = new ArrayList<>();
+
+        try {
+            String sql = "";
+            if (status.equals("")) {
+                sql = "select a.Id, a.Title, a.ShortDescription, a.PostingDate, a.UserEmail, a.Content, a.Status, u.Name\n"
+                        + "from Article a\n"
+                        + "join [User] u\n"
+                        + "on u.Email = a.UserEmail\n"
+                        + "where u.Name like ?\n"
+                        + "order by a.PostingDate DESC";
+            } else {
+                sql = "select a.Id, a.Title, a.ShortDescription, a.PostingDate, a.UserEmail, a.Content, a.Status, u.Name\n"
+                        + "from Article a\n"
+                        + "join [User] u\n"
+                        + "on u.Email = a.UserEmail\n"
+                        + "where a.Status = ? and u.Name like ?\n"
+                        + "order by a.PostingDate DESC";
+            }
+            con = ConnectDB.makeConnnection();
+            pst = con.prepareStatement(sql);
+            if (status.equals("")) {
+                pst.setString(1, "%" + articleName + "%");
+            } else {
+                pst.setString(1, status);
+                pst.setString(2, "%" + articleName + "%");
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                String title = rs.getString(2);
+                String shortDescription = rs.getString(3);
+                Timestamp postingDate = rs.getTimestamp(4);
+                String userEmail = rs.getString(5);
+                String content = rs.getString(6);
+                status = rs.getString(7);
+                String name = rs.getString(8);
+                ArticleDTO dto = new ArticleDTO(id, title, shortDescription, postingDate, userEmail, name, content, status);
+                list.add(dto);
+            }
+        } finally {
+            closeConnection();
+        }
+
+        return list;
+    }
+
+    public List<ArticleDTO> searchByNameWithPagination(String articleName, String status, int page) throws Exception {
+        List<ArticleDTO> list = new ArrayList<>();
+
+        try {
+            String sql = "";
+            if (status.equals("")) {
+                sql = "select a.Id, a.Title, a.ShortDescription, a.PostingDate, a.UserEmail, a.Content, a.Status, u.Name\n"
+                        + "from Article a\n"
+                        + "join [User] u\n"
+                        + "on u.Email = a.UserEmail\n"
+                        + "where u.Name like ?\n"
+                        + "order by a.PostingDate DESC\n"
+                        + "offset ? rows\n"
+                        + "fetch next 20 rows only";
+            } else {
+                sql = "select a.Id, a.Title, a.ShortDescription, a.PostingDate, a.UserEmail, a.Content, a.Status, u.Name\n"
+                        + "from Article a\n"
+                        + "join [User] u\n"
+                        + "on u.Email = a.UserEmail\n"
+                        + "where a.Status = ? and u.Name like ?\n"
+                        + "order by a.PostingDate DESC\n"
+                        + "offset ? rows\n"
+                        + "fetch next 20 rows only";
+            }
+            con = ConnectDB.makeConnnection();
+            pst = con.prepareStatement(sql);
+            if (status.equals("")) {
+                pst.setString(1, "%" + articleName + "%");
+                pst.setInt(2, page);
+            } else {
+                pst.setString(1, status);
+                pst.setString(2, "%" + articleName + "%");
+                pst.setInt(3, page);
+            }
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                String title = rs.getString(2);
+                String shortDescription = rs.getString(3);
+                Timestamp postingDate = rs.getTimestamp(4);
+                String userEmail = rs.getString(5);
+                String content = rs.getString(6);
+                status = rs.getString(7);
+                String name = rs.getString(8);
+                ArticleDTO dto = new ArticleDTO(id, title, shortDescription, postingDate, userEmail, name, content, status);
+                list.add(dto);
+            }
+        } finally {
+            closeConnection();
+        }
+
+        return list;
+    }
+
+    public boolean approve(int id) throws Exception {
+        boolean check = false;
+
+        try {
+            String sql = "update Article set Status='Active' where id = ?";
+            con = ConnectDB.makeConnnection();
+            pst = con.prepareStatement(sql);
+            pst.setInt(1, id);
+            check = pst.executeUpdate() > 0;
+        } finally {
+            closeConnection();
+        }
+
+        return check;
+    }
+
+    public boolean delete(int id) throws Exception {
+        boolean check = false;
+
+        try {
+            String sql = "update Article set Status='Deleted' where id = ?";
+            con = ConnectDB.makeConnnection();
+            pst = con.prepareStatement(sql);
+            pst.setInt(1, id);
+            check = pst.executeUpdate() > 0;
+        } finally {
+            closeConnection();
+        }
+
+        return check;
+    }
 }
