@@ -148,7 +148,7 @@ public class ArticleDAO {
         return dto;
     }
 
-    public List<ArticleDTO> searchByName(String articleName, String status) throws Exception {
+    public List<ArticleDTO> searchByContentAdmin(String contentSearch, String status) throws Exception {
         List<ArticleDTO> list = new ArrayList<>();
 
         try {
@@ -158,23 +158,23 @@ public class ArticleDAO {
                         + "from Article a\n"
                         + "join [User] u\n"
                         + "on u.Email = a.UserEmail\n"
-                        + "where u.Name like ?\n"
+                        + "where a.Content like ?\n"
                         + "order by a.PostingDate DESC";
             } else {
                 sql = "select a.Id, a.Title, a.ShortDescription, a.PostingDate, a.UserEmail, a.Content, a.Status, u.Name\n"
                         + "from Article a\n"
                         + "join [User] u\n"
                         + "on u.Email = a.UserEmail\n"
-                        + "where a.Status = ? and u.Name like ?\n"
+                        + "where a.Status = ? and a.Content like ?\n"
                         + "order by a.PostingDate DESC";
             }
             con = ConnectDB.makeConnnection();
             pst = con.prepareStatement(sql);
             if (status.equals("")) {
-                pst.setString(1, "%" + articleName + "%");
+                pst.setString(1, "%" + contentSearch + "%");
             } else {
                 pst.setString(1, status);
-                pst.setString(2, "%" + articleName + "%");
+                pst.setString(2, "%" + contentSearch + "%");
             }
             rs = pst.executeQuery();
             while (rs.next()) {
@@ -196,7 +196,7 @@ public class ArticleDAO {
         return list;
     }
 
-    public List<ArticleDTO> searchByNameWithPagination(String articleName, String status, int page) throws Exception {
+    public List<ArticleDTO> searchByContentAdminWithPagination(String contentSearch, String status, int page) throws Exception {
         List<ArticleDTO> list = new ArrayList<>();
 
         try {
@@ -206,7 +206,7 @@ public class ArticleDAO {
                         + "from Article a\n"
                         + "join [User] u\n"
                         + "on u.Email = a.UserEmail\n"
-                        + "where u.Name like ?\n"
+                        + "where a.Content like ?\n"
                         + "order by a.PostingDate DESC\n"
                         + "offset ? rows\n"
                         + "fetch next 20 rows only";
@@ -215,7 +215,7 @@ public class ArticleDAO {
                         + "from Article a\n"
                         + "join [User] u\n"
                         + "on u.Email = a.UserEmail\n"
-                        + "where a.Status = ? and u.Name like ?\n"
+                        + "where a.Status = ? and a.Content like ?\n"
                         + "order by a.PostingDate DESC\n"
                         + "offset ? rows\n"
                         + "fetch next 20 rows only";
@@ -223,11 +223,11 @@ public class ArticleDAO {
             con = ConnectDB.makeConnnection();
             pst = con.prepareStatement(sql);
             if (status.equals("")) {
-                pst.setString(1, "%" + articleName + "%");
+                pst.setString(1, "%" + contentSearch + "%");
                 pst.setInt(2, page);
             } else {
                 pst.setString(1, status);
-                pst.setString(2, "%" + articleName + "%");
+                pst.setString(2, "%" + contentSearch + "%");
                 pst.setInt(3, page);
             }
             rs = pst.executeQuery();

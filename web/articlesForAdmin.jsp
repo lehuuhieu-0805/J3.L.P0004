@@ -32,7 +32,7 @@
             <form action="MainController" style="margin-top: 20px">
                 <div class="row">
                     <div class="form-group col-8">
-                        <input type="text" class="form-control" id="exampleInputArticleName" name="txtSearchArticleName" value="${param.txtSearchArticleName}" placeholder="Search by article name" >
+                        <input type="text" class="form-control" id="exampleInputContent" name="txtSearchContent" value="${param.txtSearchContent}" placeholder="Search by content" >
                     </div>
                     <div class="col-4">
                         <select class="custom-select" name="selectStatusPosting">
@@ -46,8 +46,6 @@
 
                 <input type="submit" value="Search Article" name="action" class="btn btn-primary"/>
             </form>
-
-            <c:set var="searchContent" value="${param.txtSearchArticleName}"/>
 
             <c:set var="result" value="${requestScope.LIST_ARTICLES}"/>
             <c:if test="${not empty result}">

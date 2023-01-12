@@ -32,7 +32,7 @@ public class SearchArticleController extends HttpServlet {
         String url = ERROR;
 
         try {
-            String articleName = request.getParameter("txtSearchArticleName");
+            String content = request.getParameter("txtSearchContent");
             String selectStatusPosting = request.getParameter("selectStatusPosting");
 
             String pageTemp = request.getParameter("page");
@@ -42,8 +42,8 @@ public class SearchArticleController extends HttpServlet {
                 page = Integer.parseInt(request.getParameter("page")) - 1;
             }
 
-            if (articleName == null) {
-                articleName = "";
+            if (content == null) {
+                content = "";
             }
 
             if (selectStatusPosting == null || selectStatusPosting.equals("Choose status posting")) {
@@ -51,7 +51,7 @@ public class SearchArticleController extends HttpServlet {
             }
 
             ArticleDAO dao = new ArticleDAO();
-            List<ArticleDTO> list = dao.searchByNameWithPagination(articleName, selectStatusPosting, page);
+            List<ArticleDTO> list = dao.searchByContentAdminWithPagination(content, selectStatusPosting, page);
 
             request.setAttribute("LIST_ARTICLES", list);
             if (selectStatusPosting.equals("")) {
@@ -60,7 +60,7 @@ public class SearchArticleController extends HttpServlet {
             request.setAttribute("STATUS", selectStatusPosting);
             url = SUCCESS;
 
-            int count = dao.searchByName(articleName, selectStatusPosting).size();
+            int count = dao.searchByContentAdmin(content, selectStatusPosting).size();
             int endPage = count / 20;
             if (count % 20 != 0) {
                 endPage++;
