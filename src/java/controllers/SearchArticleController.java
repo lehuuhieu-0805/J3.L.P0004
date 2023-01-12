@@ -54,10 +54,7 @@ public class SearchArticleController extends HttpServlet {
             List<ArticleDTO> list = dao.searchByContentAdminWithPagination(content, selectStatusPosting, page);
 
             request.setAttribute("LIST_ARTICLES", list);
-            if (selectStatusPosting.equals("")) {
-                selectStatusPosting = "Choose status posting";
-            }
-            request.setAttribute("STATUS", selectStatusPosting);
+
             url = SUCCESS;
 
             int count = dao.searchByContentAdmin(content, selectStatusPosting).size();
@@ -69,6 +66,11 @@ public class SearchArticleController extends HttpServlet {
             request.setAttribute("END_PAGE", endPage);
             // this value page use in offset sql and offset start = 0 so current page must equal page + 1
             request.setAttribute("CURRENT_PAGE", page + 1);
+
+            if (selectStatusPosting.equals("")) {
+                selectStatusPosting = "Choose status posting";
+            }
+            request.setAttribute("STATUS", selectStatusPosting);
         } catch (Exception e) {
             log("ERROR at SearchArticleController: " + e.getMessage());
         } finally {

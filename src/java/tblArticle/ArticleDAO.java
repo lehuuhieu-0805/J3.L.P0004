@@ -158,15 +158,13 @@ public class ArticleDAO {
                         + "from Article a\n"
                         + "join [User] u\n"
                         + "on u.Email = a.UserEmail\n"
-                        + "where a.Content like ?\n"
-                        + "order by a.PostingDate DESC";
+                        + "where a.Content like ?\n";
             } else {
                 sql = "select a.Id, a.Title, a.ShortDescription, a.PostingDate, a.UserEmail, a.Content, a.Status, u.Name\n"
                         + "from Article a\n"
                         + "join [User] u\n"
                         + "on u.Email = a.UserEmail\n"
-                        + "where a.Status = ? and a.Content like ?\n"
-                        + "order by a.PostingDate DESC";
+                        + "where a.Status = ? and a.Content like ?\n";
             }
             con = ConnectDB.makeConnnection();
             pst = con.prepareStatement(sql);
